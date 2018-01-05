@@ -7,7 +7,8 @@ import Select from './components/select.js';
 
 class App extends Component {
   state = {
-    airline: 'all'
+    airline: 'all',
+    airport: 'all',
   }
 
   formatValue = (property, value) => {
@@ -16,7 +17,7 @@ class App extends Component {
     } else {
       return DATA.getAirportByCode(value).name;
     }
-  };
+  }
 
   selectAirline = (value) => {
     if (value !== 'all') {
@@ -25,8 +26,18 @@ class App extends Component {
     this.setState({airline: value});
   }
 
+  selectAirport = (value) => {
+    this.setState({airport: value})
+  }
+
   routeHasCurrentAirline = (route) => {
     return route.airline === this.state.airline || this.state.airline === 'all';
+  }
+
+  routeHasCurrentAirport = (route) => {
+    return route.src === this.state.airport ||
+           route.dest === this.state.airport ||
+           this.state.airport === 'all'
   }
 
   render() {
@@ -36,8 +47,14 @@ class App extends Component {
       {name: 'Destination Airport', property: 'dest'},
     ];
 
-    const filteredRoutesByAirline = DATA.routes.filter(this.routeHasCurrentAirline)
+    const filteredRoutesByAirline = DATA.routes.filter(this.routeHasCurrentAirline);
+    const filteredRoutesByAirport = DATA.routes.filter(this.routeHasCurrentAirport);
     const airlines = DATA.airlines;
+    const airports = DATA.airports;
+
+    const filteredRoutes = filteredRoutesByAirline.filter((route) => {
+      return filteredRoutesByAirport.includes(route);
+    });
 
     return (
       <div className="app">
@@ -59,11 +76,20 @@ class App extends Component {
             value={this.state.airline}
             onSelect={this.selectAirline}
           />
+          flying in or out of
+          <Select
+            options={airports}
+            valueKey="code"
+            titleKey="name"
+            allTitle="All Airports"
+            value={this.state.airport}
+            onSelect={this.selectAirport}
+          />
         </p>
         <Table
           className="routes-table"
           columns={columns}
-          rows={filteredRoutesByAirline}
+          rows={filteredRoutes}
           format={this.formatValue}
         />
       </div>

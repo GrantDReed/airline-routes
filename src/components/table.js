@@ -28,11 +28,11 @@ class Table extends Component {
 
   render() {
     const start = this.state.page * this.props.perPage;
-    const headers = this.props.columns.map((col) => <th>{col.name}</th>)
+    const headers = this.props.columns.map((col) => <th key={col.name}>{col.name}</th>)
     const rows = this.props.rows.slice(start, start + this.props.perPage).map((row) => (
-      <tr>
-        {this.props.columns.map((column) => (
-          <td>{this.props.format(column.property, row[column.property])}</td>
+      <tr key={Object.values(row).join(':')}>
+        {this.props.columns.map((col) => (
+          <td key={col.property + row[col.property]}>{this.props.format(col.property, row[col.property])}</td>
         ))}
       </tr>
     ));
