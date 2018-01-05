@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
+import DATA from './data.js';
 
 class App extends Component {
+  state = {
+    tableColumnData: ['Airline', 'Source Airport', 'Destination Airport'],
+    tableRowData: DATA.routes,
+  };
+
   render() {
     return (
       <div className="app">
@@ -13,7 +19,42 @@ class App extends Component {
             Welcome to the app!
           </p>
         </section>
+        <Table
+          columnData={this.state.tableColumnData}
+          rowData={this.state.tableRowData}
+        />
       </div>
+    );
+  }
+}
+
+class Table extends Component {
+  buildColumns = (columnData) => {
+    return columnData.map((col) => (<th>{col}</th>));
+  };
+
+  buildRows = (rowData) => {
+    return rowData.map((row) => (
+        <tr>
+          <td>{row.airline}</td>
+          <td>{row.src}</td>
+          <td>{row.dest}</td>
+        </tr>
+      ));
+  };
+
+  render() {
+    return(
+      <table>
+        <thead>
+          <tr>
+            {this.buildColumns(this.props.columnData)}
+          </tr>
+        </thead>
+        <tbody>
+          {this.buildRows(this.props.rowData)}
+        </tbody>
+      </table>
     );
   }
 }
