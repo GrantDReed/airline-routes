@@ -36,9 +36,9 @@ class Table extends Component {
   buildRows = (rowData) => {
     return rowData.map((row) => (
         <tr>
-          <td>{row.airline}</td>
-          <td>{row.src}</td>
-          <td>{row.dest}</td>
+          <td>{DATA.getAirlineById(row.airline)}</td>
+          <td>{DATA.getAirportByCode(row.src)}</td>
+          <td>{DATA.getAirportByCode(row.dest)}</td>
         </tr>
       ));
   };
