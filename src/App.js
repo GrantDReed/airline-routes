@@ -32,7 +32,11 @@ class App extends Component {
             Welcome to the app!
           </p>
         </section>
-        <Table className="routes-table" columns={columns} rows={routes} format={this.formatValue} />
+        <Table
+          className="routes-table"
+          columns={columns}
+          rows={routes}
+          format={this.formatValue} />
       </div>
     );
   }
