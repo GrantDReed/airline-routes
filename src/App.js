@@ -3,8 +3,13 @@ import './App.css';
 import DATA from './data.js';
 
 import Table from './components/table.js';
+import Select from './components/select.js';
 
 class App extends Component {
+  state = {
+    airline: 'all'
+  }
+
   formatValue = (property, value) => {
     if (property === 'airline') {
       return DATA.getAirlineById(value).name;
@@ -13,6 +18,17 @@ class App extends Component {
     }
   };
 
+  selectAirline = (value) => {
+    if (value !== 'all') {
+      value = parseInt(value, 10);
+    }
+    this.setState({airline: value});
+  }
+
+  routeHasCurrentAirline = (route) => {
+    return route.airline === this.state.airline || this.state.airline === 'all';
+  }
+
   render() {
     const columns = [
       {name: 'Airline', property: 'airline'},
@@ -20,7 +36,8 @@ class App extends Component {
       {name: 'Destination Airport', property: 'dest'},
     ];
 
-    const routes = DATA.routes;
+    const filteredRoutesByAirline = DATA.routes.filter(this.routeHasCurrentAirline)
+    const airlines = DATA.airlines;
 
     return (
       <div className="app">
@@ -32,11 +49,23 @@ class App extends Component {
             Welcome to the app!
           </p>
         </section>
+        <p>
+          Show routes on
+          <Select
+            options={airlines}
+            valueKey="id"
+            titleKey="name"
+            allTitle="All Airlines"
+            value={this.state.airline}
+            onSelect={this.selectAirline}
+          />
+        </p>
         <Table
           className="routes-table"
           columns={columns}
-          rows={routes}
-          format={this.formatValue} />
+          rows={filteredRoutesByAirline}
+          format={this.formatValue}
+        />
       </div>
     );
   }
