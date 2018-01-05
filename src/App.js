@@ -40,6 +40,13 @@ class App extends Component {
            this.state.airport === 'all'
   }
 
+  clearFilters = () => {
+    this.setState({
+      airline: 'all',
+      airport: 'all',
+    });
+  }
+
   render() {
     const columns = [
       {name: 'Airline', property: 'airline'},
@@ -85,6 +92,9 @@ class App extends Component {
             value={this.state.airport}
             onSelect={this.selectAirport}
           />
+          <button onClick={this.clearFilters}>
+            Show All Routes
+          </button>
         </p>
         <Table
           className="routes-table"
