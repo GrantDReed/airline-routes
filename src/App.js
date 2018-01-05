@@ -6,9 +6,15 @@ import Table from './components/table.js';
 import Select from './components/select.js';
 
 class App extends Component {
-  state = {
+  defaultState = {
     airline: 'all',
     airport: 'all',
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = this.defaultState;
   }
 
   formatValue = (property, value) => {
@@ -41,10 +47,7 @@ class App extends Component {
   }
 
   clearFilters = () => {
-    this.setState({
-      airline: 'all',
-      airport: 'all',
-    });
+    this.setState(this.defaultState);
   }
 
   render() {
@@ -56,12 +59,20 @@ class App extends Component {
 
     const filteredRoutesByAirline = DATA.routes.filter(this.routeHasCurrentAirline);
     const filteredRoutesByAirport = DATA.routes.filter(this.routeHasCurrentAirport);
-    const airlines = DATA.airlines;
-    const airports = DATA.airports;
+
+    const filteredAirlines = DATA.airlines.filter( (airline) => {
+      return filteredRoutesByAirport.some( (route) => route.airline === airline.id );
+    });
+
+    const filteredAirports = DATA.airports.filter( (airport) => {
+      return filteredRoutesByAirline.some( (route) => route.src === airport.code || route.dest === airport.code );
+    });
 
     const filteredRoutes = filteredRoutesByAirline.filter((route) => {
-      return filteredRoutesByAirport.includes(route);
+      return this.routeHasCurrentAirline(route) && this.routeHasCurrentAirport(route);
     });
+
+    const defaultsSelected = this.state.airline === this.defaultState.airline && this.state.airport === this.defaultState.airport;
 
     return (
       <div className="app">
@@ -76,7 +87,7 @@ class App extends Component {
         <p>
           Show routes on
           <Select
-            options={airlines}
+            options={filteredAirlines}
             valueKey="id"
             titleKey="name"
             allTitle="All Airlines"
@@ -85,14 +96,17 @@ class App extends Component {
           />
           flying in or out of
           <Select
-            options={airports}
+            options={filteredAirports}
             valueKey="code"
             titleKey="name"
             allTitle="All Airports"
             value={this.state.airport}
             onSelect={this.selectAirport}
           />
-          <button onClick={this.clearFilters}>
+          <button
+            onClick={this.clearFilters}
+            disabled={defaultsSelected}
+          >
             Show All Routes
           </button>
         </p>
