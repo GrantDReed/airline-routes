@@ -2,13 +2,26 @@ import React, { Component } from 'react';
 import './App.css';
 import DATA from './data.js';
 
+import Table from './components/table.js';
+
 class App extends Component {
-  state = {
-    tableColumnData: ['Airline', 'Source Airport', 'Destination Airport'],
-    tableRowData: DATA.routes,
+  formatValue = (property, value) => {
+    if (property === 'airline') {
+      return DATA.getAirlineById(value).name;
+    } else {
+      return DATA.getAirportByCode(value).name;
+    }
   };
 
   render() {
+    const columns = [
+      {name: 'Airline', property: 'airline'},
+      {name: 'Source Airport', property: 'src'},
+      {name: 'Destination Airport', property: 'dest'},
+    ];
+
+    const routes = DATA.routes;
+
     return (
       <div className="app">
         <header className="header">
@@ -19,42 +32,8 @@ class App extends Component {
             Welcome to the app!
           </p>
         </section>
-        <Table
-          columnData={this.state.tableColumnData}
-          rowData={this.state.tableRowData}
-        />
+        <Table className="routes-table" columns={columns} rows={routes} format={this.formatValue} />
       </div>
-    );
-  }
-}
-
-class Table extends Component {
-  buildColumns = (columnData) => {
-    return columnData.map((col) => (<th>{col}</th>));
-  };
-
-  buildRows = (rowData) => {
-    return rowData.map((row) => (
-        <tr>
-          <td>{DATA.getAirlineById(row.airline)}</td>
-          <td>{DATA.getAirportByCode(row.src)}</td>
-          <td>{DATA.getAirportByCode(row.dest)}</td>
-        </tr>
-      ));
-  };
-
-  render() {
-    return(
-      <table>
-        <thead>
-          <tr>
-            {this.buildColumns(this.props.columnData)}
-          </tr>
-        </thead>
-        <tbody>
-          {this.buildRows(this.props.rowData)}
-        </tbody>
-      </table>
     );
   }
 }
